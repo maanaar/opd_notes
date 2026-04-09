@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(46, 204, 113, 0.2));
+            min-height: 100vh;
+        }
+        .profile-container {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+            border: 1px solid rgba(52, 152, 219, 0.16);
+        }
+        .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            box-shadow: 0 12px 30px rgba(52, 152, 219, 0.2);
+        }
+        .profile-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+        .profile-box {
+            background: #fbfdff;
+            border-radius: 18px;
+            padding: 22px;
+            border: 1px solid rgba(52, 152, 219, 0.12);
+            min-height: 112px;
+        }
+        .profile-box h5,
+        .profile-box h6 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        .profile-box strong {
+            font-size: 1.1rem;
+        }
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+        .badge-sm {
+            font-size: 0.75rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .record-box {
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #fefcff;
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid rgba(52, 152, 219, 0.12);
+            min-height: 200px;
+        }
+        .profile-note {
+            color: #536278;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-lg">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar" id="patientAvatar">AH</div>
+                <div>
+                    <h1 id="patientName">Patient Profile</h1>
+                    <p class="text-muted mb-1" id="patientIdText">ID: -</p>
+                    <p class="profile-note">A clean, modern profile view showing patient demographics, medical record, and extracted health details.</p>
+                </div>
+                <div class="ms-auto align-self-start">
+                    <a href="index.html" class="btn btn-primary btn-lg">← Back to records</a>
+                </div>
+            </div>
+
+            <div class="profile-meta-grid">
+                <div class="profile-box">
+                    <h6>Age</h6>
+                    <strong id="ageText">-</strong>
+                </div>
+                <div class="profile-box">
+                    <h6>Gender</h6>
+                    <strong id="genderText">-</strong>
+                </div>
+                <div class="profile-box">
+                    <h6>Nationality</h6>
+                    <strong id="nationalityText">-</strong>
+                </div>
+                <div class="profile-box">
+                    <h6>City</h6>
+                    <strong id="cityText">-</strong>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="profile-box mb-4">
+                        <h5 class="section-title">Medical Record</h5>
+                        <div id="medicalRecord" class="record-box">Loading...</div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="profile-box">
+                                <h5 class="section-title">Allergies</h5>
+                                <div id="allergiesList"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-box">
+                                <h5 class="section-title">Diagnoses</h5>
+                                <div id="diagnosesList"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-box">
+                                <h5 class="section-title">Medications</h5>
+                                <div id="medicationsList"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-box">
+                                <h5 class="section-title">Procedures</h5>
+                                <div id="proceduresList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="notFound" class="alert alert-danger" style="display:none;">
+                Patient profile not found. Please return to the record list and choose another patient.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="data.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
