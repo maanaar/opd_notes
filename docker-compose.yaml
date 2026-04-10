@@ -30,7 +30,7 @@ services:
 
   screening:
     build:
-      context: ./Screening
+      context: ./Screening-main
       dockerfile: Dockerfile
     container_name: revy_screening
     restart: unless-stopped
