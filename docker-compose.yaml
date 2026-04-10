@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+
+  mongodb:
+    image: mongo:7
+    container_name: revy_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  resubmission:
+    build:
+      context: ./Resubmission-main
+      dockerfile: Dockerfile
+    container_name: revy_resubmission
+    restart: unless-stopped
+    ports:
+      - "2200:2200"
+    environment:
+      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY}
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-dev-secret-key}
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=resubmission_db
+    depends_on:
+      - mongodb
+
+  screening:
+    build:
+      context: ./Screening
+      dockerfile: Dockerfile
+    container_name: revy_screening
+    restart: unless-stopped
+    ports:
+      - "2030:2030"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: revy_portal
+    restart: unless-stopped
+    ports:
+      - "2020:2020"
+    depends_on:
+      - resubmission
+      - screening
+
+volumes:
+  mongo_data:

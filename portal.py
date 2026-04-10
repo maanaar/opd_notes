@@ -22,4 +22,4 @@ def opd_files(filename):
 
 
 if __name__ == "__main__":
-    app.run(port=2020, debug=True)
+    app.run(host="0.0.0.0", port=2020, debug=True)
