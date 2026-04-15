@@ -292,12 +292,12 @@
 
     <!-- Resubmission iframe -->
     <div class="iframe-view" id="view-resub">
-      <iframe src="http://localhost:2200" title="Resubmission Copilot" id="iframe-resub"></iframe>
+      <iframe src="" title="Resubmission Copilot" id="iframe-resub"></iframe>
     </div>
 
     <!-- Screening iframe -->
     <div class="iframe-view" id="view-screen">
-      <iframe src="http://localhost:2030" title="Doctor Screening" id="iframe-screen"></iframe>
+      <iframe src="" title="Doctor Screening" id="iframe-screen"></iframe>
     </div>
 
   </div>
@@ -319,6 +319,11 @@
         el.classList.toggle('active', v === name);
       });
     }
+
+    // Set iframe URLs based on current hostname so it works behind nginx
+    const host = window.location.hostname;
+    document.getElementById('iframe-resub').src = `http://${host}:2200`;
+    document.getElementById('iframe-screen').src = `http://${host}:2030`;
 
     // Clock
     function updateClock() {
