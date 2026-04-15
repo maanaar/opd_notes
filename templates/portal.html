@@ -320,10 +320,8 @@
       });
     }
 
-    // Set iframe URLs based on current hostname so it works behind nginx
-    const host = window.location.hostname;
-    document.getElementById('iframe-resub').src = `http://${host}:2200`;
-    document.getElementById('iframe-screen').src = `http://${host}:2030`;
+    document.getElementById('iframe-resub').src = '/resub/';
+    document.getElementById('iframe-screen').src = '/screen/';
 
     // Clock
     function updateClock() {
