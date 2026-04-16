@@ -320,8 +320,14 @@
       });
     }
 
-    document.getElementById('iframe-resub').src = '/resubmission/';
-    document.getElementById('iframe-screen').src = '/screening/';
+    if (window.location.protocol === 'https:') {
+      document.getElementById('iframe-resub').src = '/resubmission/';
+      document.getElementById('iframe-screen').src = '/screening/';
+    } else {
+      const host = window.location.hostname;
+      document.getElementById('iframe-resub').src = `http://${host}:2200`;
+      document.getElementById('iframe-screen').src = `http://${host}:2030`;
+    }
 
     // Clock
     function updateClock() {
