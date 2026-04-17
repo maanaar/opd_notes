@@ -28,7 +28,7 @@ services:
 
   screening:
     build:
-      context: ./Screening-main
+      context: ./Screening
       dockerfile: Dockerfile
     container_name: revy_screening
     restart: unless-stopped
@@ -36,6 +36,28 @@ services:
       - "2030:2030"
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+
+  submission:
+    build:
+      context: ./submission
+      dockerfile: dockerfile
+    container_name: revy_submission
+    restart: unless-stopped
+    ports:
+      - "2300:2300"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+
+  approval:
+    build:
+      context: ./approval
+      dockerfile: dockerfile
+    container_name: revy_approval
+    restart: unless-stopped
+    ports:
+      - "2400:2400"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
   portal:
     build:
@@ -48,6 +70,8 @@ services:
     depends_on:
       - resubmission
       - screening
+      - submission
+      - approval
 
 volumes:
   mongo_data:

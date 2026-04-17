@@ -777,8 +777,16 @@ function lineMulti(id, labels, datasets) {
   mkChart(id, 'line', labels, datasets);
 }
 
+function hexRgba(hex) {
+  // accepts #rrggbb or #rrggbbaa → rgba(r,g,b,a)
+  const h = hex.replace('#','');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  const a = h.length === 8 ? (parseInt(h.slice(6,8),16)/255).toFixed(2) : 1;
+  return `rgba(${r},${g},${b},${a})`;
+}
 function bar(id, labels, data, colors, label='') {
-  const bg = Array.isArray(colors) ? colors : Array(data.length).fill(colors+'cc');
+  const conv = c => c.startsWith('#') ? hexRgba(c) : c;
+  const bg = Array.isArray(colors) ? colors.map(conv) : Array(data.length).fill(conv(colors));
   mkChart(id, 'bar', labels, [{ label, data, backgroundColor: bg, borderRadius: 5, borderSkipped: false }]);
 }
 

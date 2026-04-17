@@ -62,6 +62,7 @@ EOF
 cat > ~/revy/opd_notes/.env << 'EOF'
 FIREWORKS_API_KEY=your_fireworks_key_here
 GEMINI_API_KEY=your_gemini_key_here
+GOOGLE_API_KEY=your_google_api_key_here
 FLASK_SECRET_KEY=any-random-secret-string
 EOF
 ```
