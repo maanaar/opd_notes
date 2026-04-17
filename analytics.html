@@ -9,12 +9,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --sidebar-w: 220px;
+      --sidebar-w: 224px;
       --primary: #1a6b8a;
       --dark: #0d2d3f;
       --accent: #24a6c7;
       --bg: #f0f5f9;
-      --card-bg: #fff;
+      --card: #fff;
       --sidebar-bg: #0d2d3f;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,392 +30,870 @@
       overflow-y: auto;
     }
     .sidebar-brand {
-      padding: 18px 16px 12px;
+      padding: 16px 16px 14px;
       color: #fff;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.97rem;
       border-bottom: 1px solid rgba(255,255,255,0.08);
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .sidebar-brand i { color: #24a6c7; font-size: 1.2rem; }
-    .sidebar-section {
-      padding: 10px 12px 4px;
-      font-size: 0.68rem;
-      color: rgba(255,255,255,0.4);
+    .sidebar-section-label {
+      padding: 12px 14px 4px;
+      font-size: 0.64rem;
+      color: rgba(255,255,255,0.38);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.1px;
     }
-    .sidebar-item {
+    .nav-item {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       padding: 9px 16px;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.68);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       border-left: 3px solid transparent;
       transition: all 0.15s;
-      text-decoration: none;
+      user-select: none;
     }
-    .sidebar-item:hover, .sidebar-item.active {
-      background: rgba(255,255,255,0.07);
-      color: #fff;
-      border-left-color: var(--accent);
-    }
-    .sidebar-item i { font-size: 1rem; width: 18px; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: rgba(36,166,199,0.12); color: #fff; border-left-color: #24a6c7; font-weight: 600; }
+    .nav-item i { font-size: 0.95rem; width: 18px; flex-shrink: 0; }
 
     /* ── Main ── */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .topbar {
-      background: #fff;
-      padding: 10px 24px;
+      background: var(--card);
+      padding: 10px 22px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-bottom: 1px solid #dde4ea;
       flex-shrink: 0;
     }
     .topbar h5 { margin: 0; font-weight: 700; color: var(--dark); font-size: 1rem; }
-    .topbar .sub { color: #6b8899; font-size: 0.8rem; }
+    .topbar .sub { color: #6b8899; font-size: 0.77rem; margin-top: 1px; }
     .topbar .spacer { flex: 1; }
     .filter-badge {
       background: var(--bg);
       border: 1px solid #cdd8e0;
       border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 0.78rem;
+      padding: 5px 11px;
+      font-size: 0.76rem;
       color: #456;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .content { flex: 1; overflow-y: auto; padding: 18px 22px; }
+
+    /* ── Section visibility ── */
+    .dash-section { display: none; }
+    .dash-section.active { display: block; }
+
+    /* ── KPI cards ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 18px; }
+    .kpi-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+    .kpi-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 14px 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .kpi-card .kpi-label { font-size: 0.7rem; color: #789; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+    .kpi-card .kpi-value { font-size: 1.45rem; font-weight: 800; color: var(--dark); margin: 4px 0 2px; }
+    .kpi-card .kpi-delta { font-size: 0.73rem; }
+    .up { color: #1a8a4a; } .down { color: #c0392b; }
+    .kpi-card .kpi-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; margin-bottom: 8px;
+    }
+
+    /* ── Chart grid ── */
+    .chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+    .chart-grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 18px; }
+    .chart-grid-3b { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+    .chart-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .chart-card .chart-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+    .chart-card .chart-title span { color: #789; font-weight: 400; font-size: 0.73rem; }
+    .chart-wrap { position: relative; }
+    .chart-wrap.h200 { height: 200px; }
+    .chart-wrap.h180 { height: 180px; }
+    .chart-wrap.h160 { height: 160px; }
 
-    /* ── KPI Cards ── */
-    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
-    .kpi-card {
-      background: var(--card-bg);
+    /* ── Overview dept mini cards ── */
+    .dept-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
+    .dept-card {
+      background: var(--card);
       border-radius: 10px;
-      padding: 14px 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    .kpi-card .label { font-size: 0.72rem; color: #789; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
-    .kpi-card .value { font-size: 1.5rem; font-weight: 800; color: var(--dark); margin: 4px 0 2px; }
-    .kpi-card .delta { font-size: 0.75rem; }
-    .delta.up { color: #1a8a4a; }
-    .delta.down { color: #c0392b; }
-    .kpi-card .icon-wrap {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; margin-bottom: 8px;
-    }
+    .dept-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .dept-title { font-weight: 700; font-size: 0.85rem; color: var(--dark); display: flex; align-items: center; gap: 7px; }
+    .badge-live { background: #fdecea; color: #c0392b; font-size: 0.62rem; padding: 2px 6px; border-radius: 20px; font-weight: 700; }
+    .view-link { color: var(--accent); font-size: 0.73rem; cursor: pointer; }
+    .dept-kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .dk-label { font-size: 0.68rem; color: #789; }
+    .dk-value { font-size: 0.97rem; font-weight: 700; color: var(--dark); }
+    .mini-chart-wrap { height: 56px; margin-top: 10px; }
 
-    /* ── Section title ── */
+    /* ── Section titles ── */
     .section-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 0.87rem; font-weight: 700; color: var(--dark);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
     }
     .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #e74c3c; display: inline-block; animation: blink 1.2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    /* ── Dept Cards ── */
-    .dept-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
-    .dept-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .dept-card .dept-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .dept-card .dept-title {
-      font-weight: 700;
-      font-size: 0.88rem;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .dept-card .dept-title .badge-live {
-      background: #fdecea;
-      color: #c0392b;
-      font-size: 0.65rem;
-      padding: 2px 7px;
-      border-radius: 20px;
-      font-weight: 700;
-    }
-    .dept-card .view-link { color: var(--accent); font-size: 0.75rem; text-decoration: none; }
-    .dept-kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .dept-kpi { }
-    .dept-kpi .dk-label { font-size: 0.7rem; color: #789; }
-    .dept-kpi .dk-value { font-size: 1rem; font-weight: 700; color: var(--dark); }
-    .mini-chart-wrap { height: 60px; margin-top: 8px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
     /* ── Quick Reports ── */
-    .reports-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
+    .reports-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 18px; }
     .report-card {
-      background: var(--card-bg);
+      background: var(--card);
       border-radius: 10px;
-      padding: 14px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 14px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       text-align: center;
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .report-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.10); }
-    .report-card .rc-icon { font-size: 1.4rem; margin-bottom: 6px; }
-    .report-card .rc-title { font-size: 0.78rem; font-weight: 700; color: var(--dark); }
-    .report-card .rc-sub { font-size: 0.68rem; color: #789; margin-top: 2px; }
+    .report-card .rc-icon { font-size: 1.4rem; margin-bottom: 5px; }
+    .report-card .rc-title { font-size: 0.76rem; font-weight: 700; color: var(--dark); }
+    .report-card .rc-sub { font-size: 0.66rem; color: #789; margin-top: 2px; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .data-table th { background: var(--bg); color: #567; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; padding: 7px 10px; border-bottom: 1px solid #dde4ea; }
+    .data-table td { padding: 7px 10px; border-bottom: 1px solid #eef1f4; color: var(--dark); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #f7fafc; }
+    .badge-green { background: #e8f7ee; color: #1a8a4a; font-size: 0.68rem; padding: 2px 7px; border-radius: 12px; font-weight: 600; }
+    .badge-red { background: #fdecea; color: #c0392b; font-size: 0.68rem; padding: 2px 7px; border-radius: 12px; font-weight: 600; }
+    .badge-amber { background: #fef4e4; color: #c87700; font-size: 0.68rem; padding: 2px 7px; border-radius: 12px; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-brand"><i class="bi bi-heart-pulse-fill"></i> Revy Analytics</div>
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<div class="sidebar">
+  <div class="sidebar-brand"><i class="bi bi-heart-pulse-fill"></i> Revy Analytics</div>
 
-    <a class="sidebar-item active" onclick="showSection('home')"><i class="bi bi-house-fill"></i> Home</a>
-    <a class="sidebar-item" onclick="showSection('home')"><i class="bi bi-speedometer2"></i> Executive Overview</a>
+  <div class="nav-item active" onclick="showSection('home',this)"><i class="bi bi-speedometer2"></i> Executive Overview</div>
 
-    <div class="sidebar-section">Clinical Operations</div>
-    <a class="sidebar-item" onclick="showSection('opd')"><i class="bi bi-person-lines-fill"></i> OPD</a>
-    <a class="sidebar-item" onclick="showSection('ipd')"><i class="bi bi-hospital-fill"></i> Inpatient (IPD)</a>
-    <a class="sidebar-item" onclick="showSection('cathlab')"><i class="bi bi-activity"></i> Cath Lab</a>
-    <a class="sidebar-item" onclick="showSection('icu')"><i class="bi bi-shield-plus"></i> ICU</a>
-    <a class="sidebar-item" onclick="showSection('or')"><i class="bi bi-lock-fill"></i> Closed Units (OR)</a>
-    <a class="sidebar-item" onclick="showSection('lab')"><i class="bi bi-eyedropper"></i> Lab & Radiology</a>
+  <div class="sidebar-section-label">Clinical Operations</div>
+  <div class="nav-item" onclick="showSection('opd',this)"><i class="bi bi-person-lines-fill"></i> OPD</div>
+  <div class="nav-item" onclick="showSection('ipd',this)"><i class="bi bi-hospital-fill"></i> Inpatient (IPD)</div>
+  <div class="nav-item" onclick="showSection('cathlab',this)"><i class="bi bi-activity"></i> Cath Lab</div>
+  <div class="nav-item" onclick="showSection('icu',this)"><i class="bi bi-shield-plus"></i> ICU</div>
+  <div class="nav-item" onclick="showSection('or',this)"><i class="bi bi-scissors"></i> OR / Closed Units</div>
+  <div class="nav-item" onclick="showSection('lab',this)"><i class="bi bi-eyedropper"></i> Lab & Radiology</div>
 
-    <div class="sidebar-section">Supportive Functions</div>
-    <a class="sidebar-item" onclick="showSection('marketing')"><i class="bi bi-megaphone-fill"></i> Digital Marketing</a>
-    <a class="sidebar-item" onclick="showSection('crm')"><i class="bi bi-briefcase-fill"></i> CRM & Sales</a>
-    <a class="sidebar-item" onclick="showSection('callcenter')"><i class="bi bi-telephone-fill"></i> Call Center</a>
-    <a class="sidebar-item" onclick="showSection('insurance')"><i class="bi bi-shield-check"></i> Insurance</a>
+  <div class="sidebar-section-label">Supportive Functions</div>
+  <div class="nav-item" onclick="showSection('marketing',this)"><i class="bi bi-megaphone-fill"></i> Digital Marketing</div>
+  <div class="nav-item" onclick="showSection('crm',this)"><i class="bi bi-briefcase-fill"></i> CRM & Sales</div>
+  <div class="nav-item" onclick="showSection('callcenter',this)"><i class="bi bi-telephone-fill"></i> Call Center</div>
+  <div class="nav-item" onclick="showSection('insurance',this)"><i class="bi bi-shield-check"></i> Insurance</div>
+</div>
 
-    <div class="sidebar-section">Data & Admin</div>
-    <a class="sidebar-item"><i class="bi bi-book-fill"></i> Data Dictionary</a>
-    <a class="sidebar-item"><i class="bi bi-gear-fill"></i> Admin</a>
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <h5 id="page-title">Executive Overview</h5>
+      <div class="sub" id="page-sub">Real-time performance across all departments</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="filter-badge"><i class="bi bi-calendar3"></i> May 2024 – This Week</div>
+    <div class="filter-badge"><i class="bi bi-building"></i> All Facilities</div>
+    <div class="filter-badge"><i class="bi bi-arrow-left-right"></i> vs. Previous Week</div>
   </div>
 
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <div>
-        <h5 id="page-title">Executive Overview</h5>
-        <div class="sub">Real-time performance across hospitals & business functions</div>
-      </div>
-      <div class="spacer"></div>
-      <div class="filter-badge"><i class="bi bi-calendar3"></i> 01 May 2024 – 07 May 2024</div>
-      <div class="filter-badge"><i class="bi bi-building"></i> All Facilities</div>
-      <div class="filter-badge"><i class="bi bi-arrow-left-right"></i> vs. Previous Week</div>
-    </div>
+  <div class="content">
 
-    <div class="content">
+    <!-- ══════════════════════════════════════
+         HOME — EXECUTIVE OVERVIEW
+    ══════════════════════════════════════ -->
+    <div id="section-home" class="dash-section active">
 
-      <!-- KPI Row -->
+      <!-- Top KPIs -->
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="icon-wrap" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-cash-stack"></i></div>
-          <div class="label">Total Revenue</div>
-          <div class="value">₹125.8 Cr</div>
-          <div class="delta up"><i class="bi bi-arrow-up-short"></i>4.2% vs 118.9 Cr</div>
+          <div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-cash-stack"></i></div>
+          <div class="kpi-label">Total Revenue</div><div class="kpi-value">125.8M</div>
+          <div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>4.2% vs last week</div>
         </div>
         <div class="kpi-card">
-          <div class="icon-wrap" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-person-check-fill"></i></div>
-          <div class="label">OPD Visits</div>
-          <div class="value">18,549</div>
-          <div class="delta up"><i class="bi bi-arrow-up-short"></i>3.1% vs 17,992</div>
+          <div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-person-check-fill"></i></div>
+          <div class="kpi-label">OPD Visits</div><div class="kpi-value">18,549</div>
+          <div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>3.1% vs 17,992</div>
         </div>
         <div class="kpi-card">
-          <div class="icon-wrap" style="background:#fef4e4;color:#c87700;"><i class="bi bi-hospital"></i></div>
-          <div class="label">IPD Occupancy</div>
-          <div class="value">76.8%</div>
-          <div class="delta down"><i class="bi bi-arrow-down-short"></i>1.5% vs 78.0%</div>
+          <div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-hospital"></i></div>
+          <div class="kpi-label">IPD Occupancy</div><div class="kpi-value">76.8%</div>
+          <div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>1.5% vs 78.0%</div>
         </div>
         <div class="kpi-card">
-          <div class="icon-wrap" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-clock-history"></i></div>
-          <div class="label">Avg. Lab TAT</div>
-          <div class="value">46 mins</div>
-          <div class="delta down"><i class="bi bi-arrow-down-short"></i>5.6% vs 48.7 mins</div>
+          <div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-clock-history"></i></div>
+          <div class="kpi-label">Avg Lab TAT</div><div class="kpi-value">46 mins</div>
+          <div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 2.7 mins</div>
         </div>
         <div class="kpi-card">
-          <div class="icon-wrap" style="background:#fdecea;color:#c0392b;"><i class="bi bi-telephone-fill"></i></div>
-          <div class="label">Call Center Answer Rate</div>
-          <div class="value">92.6%</div>
-          <div class="delta up"><i class="bi bi-arrow-up-short"></i>1.8% vs 91.0%</div>
+          <div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-telephone-fill"></i></div>
+          <div class="kpi-label">Call Answer Rate</div><div class="kpi-value">92.6%</div>
+          <div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>1.8% vs 91.0%</div>
         </div>
       </div>
 
-      <!-- Live Dashboards -->
-      <div class="section-title"><span class="live-dot"></span> Live Dashboards — Clinical Operations</div>
+      <!-- Live dept cards -->
+      <div class="section-title"><span class="live-dot"></span> Live — Clinical Operations</div>
       <div class="dept-grid">
-
-        <!-- OPD Live -->
         <div class="dept-card">
           <div class="dept-header">
             <div class="dept-title"><i class="bi bi-person-lines-fill" style="color:#1a6b8a;"></i> OPD <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('opd')">View Details →</a>
+            <div class="view-link" onclick="showSection('opd',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">Active Patients</div><div class="dk-value">256</div></div>
-            <div class="dept-kpi"><div class="dk-label">Avg Waiting Time</div><div class="dk-value">28 mins</div></div>
-            <div class="dept-kpi"><div class="dk-label">Doctor Utilization</div><div class="dk-value">68%</div></div>
-            <div class="dept-kpi"><div class="dk-label">No-Show Rate</div><div class="dk-value">12.4%</div></div>
+            <div><div class="dk-label">Active Patients</div><div class="dk-value">256</div></div>
+            <div><div class="dk-label">Avg Wait Time</div><div class="dk-value">28 mins</div></div>
+            <div><div class="dk-label">Doctor Utilization</div><div class="dk-value">68%</div></div>
+            <div><div class="dk-label">No-Show Rate</div><div class="dk-value">12.4%</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartOPD"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-opd"></canvas></div>
         </div>
-
-        <!-- IPD Live -->
         <div class="dept-card">
           <div class="dept-header">
-            <div class="dept-title"><i class="bi bi-hospital-fill" style="color:#c87700;"></i> Inpatient <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('ipd')">View Details →</a>
+            <div class="dept-title"><i class="bi bi-hospital-fill" style="color:#c87700;"></i> Inpatient (IPD) <span class="badge-live">LIVE</span></div>
+            <div class="view-link" onclick="showSection('ipd',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">Occupancy</div><div class="dk-value">76.8%</div></div>
-            <div class="dept-kpi"><div class="dk-label">Available Beds</div><div class="dk-value">132</div></div>
-            <div class="dept-kpi"><div class="dk-label">Admissions Today</div><div class="dk-value">184</div></div>
-            <div class="dept-kpi"><div class="dk-label">Avg LOS (days)</div><div class="dk-value">4.2</div></div>
+            <div><div class="dk-label">Occupancy</div><div class="dk-value">76.8%</div></div>
+            <div><div class="dk-label">Available Beds</div><div class="dk-value">132</div></div>
+            <div><div class="dk-label">Admissions Today</div><div class="dk-value">184</div></div>
+            <div><div class="dk-label">Avg LOS</div><div class="dk-value">4.2 days</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartIPD"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-ipd"></canvas></div>
         </div>
-
-        <!-- Cath Lab Live -->
         <div class="dept-card">
           <div class="dept-header">
             <div class="dept-title"><i class="bi bi-activity" style="color:#e74c3c;"></i> Cath Lab <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('cathlab')">View Details →</a>
+            <div class="view-link" onclick="showSection('cathlab',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">Active Procedures</div><div class="dk-value">3</div></div>
-            <div class="dept-kpi"><div class="dk-label">Lab Utilization</div><div class="dk-value">82%</div></div>
-            <div class="dept-kpi"><div class="dk-label">Turnaround Time</div><div class="dk-value">38 mins</div></div>
-            <div class="dept-kpi"><div class="dk-label">Emergency Cases</div><div class="dk-value">2</div></div>
+            <div><div class="dk-label">Active Procedures</div><div class="dk-value">3</div></div>
+            <div><div class="dk-label">Lab Utilization</div><div class="dk-value">82%</div></div>
+            <div><div class="dk-label">Turnaround Time</div><div class="dk-value">38 mins</div></div>
+            <div><div class="dk-label">Emergency Cases</div><div class="dk-value" style="color:#e74c3c;">2</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartCath"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-cath"></canvas></div>
         </div>
-
-        <!-- ICU Live -->
         <div class="dept-card">
           <div class="dept-header">
             <div class="dept-title"><i class="bi bi-shield-plus" style="color:#7c3aed;"></i> ICU <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('icu')">View Details →</a>
+            <div class="view-link" onclick="showSection('icu',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">ICU Occupancy</div><div class="dk-value">71.4%</div></div>
-            <div class="dept-kpi"><div class="dk-label">Critical Alerts</div><div class="dk-value" style="color:#e74c3c;">5</div></div>
-            <div class="dept-kpi"><div class="dk-label">Ventilator Usage</div><div class="dk-value">32</div></div>
-            <div class="dept-kpi"><div class="dk-label">Nurse:Patient Ratio</div><div class="dk-value">1:1.8</div></div>
+            <div><div class="dk-label">ICU Occupancy</div><div class="dk-value">71.4%</div></div>
+            <div><div class="dk-label">Critical Alerts</div><div class="dk-value" style="color:#e74c3c;">5</div></div>
+            <div><div class="dk-label">Ventilators</div><div class="dk-value">32</div></div>
+            <div><div class="dk-label">Nurse:Patient</div><div class="dk-value">1 : 1.8</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartICU"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-icu"></canvas></div>
         </div>
-
       </div>
 
-      <!-- Support Functions Live -->
-      <div class="section-title"><span class="live-dot"></span> Live Dashboards — Supportive Functions</div>
+      <div class="section-title"><span class="live-dot"></span> Live — Supportive Functions</div>
       <div class="dept-grid">
-
-        <!-- Marketing Live -->
         <div class="dept-card">
           <div class="dept-header">
             <div class="dept-title"><i class="bi bi-megaphone-fill" style="color:#f39c12;"></i> Digital Marketing <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('marketing')">View Details →</a>
+            <div class="view-link" onclick="showSection('marketing',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">Leads Generated</div><div class="dk-value">1,248</div></div>
-            <div class="dept-kpi"><div class="dk-label">Cost per Lead</div><div class="dk-value">₹342</div></div>
-            <div class="dept-kpi"><div class="dk-label">CTR</div><div class="dk-value">3.91%</div></div>
-            <div class="dept-kpi"><div class="dk-label">Conversion Rate</div><div class="dk-value">18.6%</div></div>
+            <div><div class="dk-label">Leads</div><div class="dk-value">1,248</div></div>
+            <div><div class="dk-label">Cost / Lead</div><div class="dk-value">342 SAR</div></div>
+            <div><div class="dk-label">CTR</div><div class="dk-value">3.91%</div></div>
+            <div><div class="dk-label">Conversion</div><div class="dk-value">18.6%</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartMarketing"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-mkt"></canvas></div>
         </div>
-
-        <!-- Call Center Live -->
         <div class="dept-card">
           <div class="dept-header">
             <div class="dept-title"><i class="bi bi-telephone-fill" style="color:#1a6b8a;"></i> Call Center <span class="badge-live">LIVE</span></div>
-            <a class="view-link" onclick="showSection('callcenter')">View Details →</a>
+            <div class="view-link" onclick="showSection('callcenter',null)">View Details →</div>
           </div>
           <div class="dept-kpi-grid">
-            <div class="dept-kpi"><div class="dk-label">Calls in Queue</div><div class="dk-value">24</div></div>
-            <div class="dept-kpi"><div class="dk-label">Answer Rate</div><div class="dk-value">92.6%</div></div>
-            <div class="dept-kpi"><div class="dk-label">Avg Handling Time</div><div class="dk-value">04:32</div></div>
-            <div class="dept-kpi"><div class="dk-label">Abandon Rate</div><div class="dk-value" style="color:#e74c3c;">4.8%</div></div>
+            <div><div class="dk-label">Calls in Queue</div><div class="dk-value">24</div></div>
+            <div><div class="dk-label">Answer Rate</div><div class="dk-value">92.6%</div></div>
+            <div><div class="dk-label">Avg Handle Time</div><div class="dk-value">4:32</div></div>
+            <div><div class="dk-label">Abandon Rate</div><div class="dk-value" style="color:#e74c3c;">4.8%</div></div>
           </div>
-          <div class="mini-chart-wrap"><canvas id="chartCall"></canvas></div>
+          <div class="mini-chart-wrap"><canvas id="m-call"></canvas></div>
         </div>
-
       </div>
 
       <!-- Quick Reports -->
-      <div class="section-title"><i class="bi bi-lightning-fill" style="color:#f39c12;"></i> Quick Access Reports</div>
+      <div class="section-title"><i class="bi bi-lightning-fill" style="color:#f39c12;"></i> Quick Reports</div>
       <div class="reports-grid">
         <div class="report-card"><div class="rc-icon" style="color:#1a6b8a;">📊</div><div class="rc-title">OPD Performance</div><div class="rc-sub">Historical Analysis</div></div>
-        <div class="report-card"><div class="rc-icon" style="color:#c87700;">🏥</div><div class="rc-title">IPD Financial</div><div class="rc-sub">Revenue & LOS Analysis</div></div>
+        <div class="report-card"><div class="rc-icon" style="color:#c87700;">🏥</div><div class="rc-title">IPD Financial</div><div class="rc-sub">Revenue & LOS</div></div>
         <div class="report-card"><div class="rc-icon" style="color:#7c3aed;">💉</div><div class="rc-title">ICU Outcomes</div><div class="rc-sub">Mortality & Quality</div></div>
-        <div class="report-card"><div class="rc-icon" style="color:#1a8a4a;">🧪</div><div class="rc-title">Lab & Rad Performance</div><div class="rc-sub">TAT & Productivity</div></div>
+        <div class="report-card"><div class="rc-icon" style="color:#1a8a4a;">🧪</div><div class="rc-title">Lab & Rad</div><div class="rc-sub">TAT & Productivity</div></div>
         <div class="report-card"><div class="rc-icon" style="color:#f39c12;">📢</div><div class="rc-title">Marketing ROI</div><div class="rc-sub">Attribution & Funnel</div></div>
         <div class="report-card"><div class="rc-icon" style="color:#e74c3c;">💼</div><div class="rc-title">Sales Pipeline</div><div class="rc-sub">CRM Analytics</div></div>
       </div>
 
-    </div><!-- end content -->
-  </div><!-- end main -->
+    </div><!-- /section-home -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ══════════════════════════════════════
+         OPD DASHBOARD
+    ══════════════════════════════════════ -->
+    <div id="section-opd" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-person-check-fill"></i></div><div class="kpi-label">Total Visits</div><div class="kpi-value">18,549</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>3.1% vs last week</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg Wait Time</div><div class="kpi-value">28 min</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 4 min</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-person-badge"></i></div><div class="kpi-label">Doctor Utilization</div><div class="kpi-value">68%</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>2% vs 70%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-x-circle"></i></div><div class="kpi-label">No-Show Rate</div><div class="kpi-value">12.4%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Improved by 1.2%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-star-fill"></i></div><div class="kpi-label">Patient Satisfaction</div><div class="kpi-value">4.3/5</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+0.1 pts</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#1a6b8a;"></i> Daily Visits — This Week <span>vs Previous Week</span></div>
+          <div class="chart-wrap h200"><canvas id="opd-visits"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#1a6b8a;"></i> Patient Type</div>
+          <div class="chart-wrap h200"><canvas id="opd-type"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#1a6b8a;"></i> Visits by Specialty</div>
+          <div class="chart-wrap h180"><canvas id="opd-specialty"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-clock-history" style="color:#c87700;"></i> Wait Time by Hour</div>
+          <div class="chart-wrap h180"><canvas id="opd-wait"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-table" style="color:#1a6b8a;"></i> Top Specialties — Visits Summary</div>
+        <table class="data-table">
+          <thead><tr><th>Specialty</th><th>Visits</th><th>Avg Wait</th><th>No-Show %</th><th>Satisfaction</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Internal Medicine</td><td>4,120</td><td>31 min</td><td>13%</td><td>4.2</td><td><span class="badge-green">On Track</span></td></tr>
+            <tr><td>Cardiology</td><td>2,870</td><td>24 min</td><td>10%</td><td>4.5</td><td><span class="badge-green">On Track</span></td></tr>
+            <tr><td>Orthopedics</td><td>2,340</td><td>35 min</td><td>15%</td><td>4.0</td><td><span class="badge-amber">Watch</span></td></tr>
+            <tr><td>Pediatrics</td><td>2,100</td><td>22 min</td><td>9%</td><td>4.6</td><td><span class="badge-green">On Track</span></td></tr>
+            <tr><td>Dermatology</td><td>1,850</td><td>42 min</td><td>18%</td><td>3.8</td><td><span class="badge-red">Review</span></td></tr>
+            <tr><td>Ophthalmology</td><td>1,400</td><td>28 min</td><td>11%</td><td>4.3</td><td><span class="badge-green">On Track</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /section-opd -->
+
+
+    <!-- ══════════════════════════════════════
+         IPD DASHBOARD
+    ══════════════════════════════════════ -->
+    <div id="section-ipd" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-hospital"></i></div><div class="kpi-label">Occupancy</div><div class="kpi-value">76.8%</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>1.5% vs 78.0%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-door-open"></i></div><div class="kpi-label">Available Beds</div><div class="kpi-value">132</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+8 from yesterday</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-arrow-bar-down"></i></div><div class="kpi-label">Admissions Today</div><div class="kpi-value">184</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+12 vs avg</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg LOS</div><div class="kpi-value">4.2 days</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 0.3 days</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-cash"></i></div><div class="kpi-label">Revenue / Bed</div><div class="kpi-value">8,400 SAR</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+320 SAR</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#c87700;"></i> Occupancy Trend — 30 Days</div>
+          <div class="chart-wrap h200"><canvas id="ipd-occ"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#c87700;"></i> Payer Mix</div>
+          <div class="chart-wrap h200"><canvas id="ipd-payer"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#c87700;"></i> Admissions by Ward</div>
+          <div class="chart-wrap h180"><canvas id="ipd-ward"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-bar-chart-steps" style="color:#c87700;"></i> Avg LOS by Department</div>
+          <div class="chart-wrap h180"><canvas id="ipd-los"></canvas></div>
+        </div>
+      </div>
+    </div><!-- /section-ipd -->
+
+
+    <!-- ══════════════════════════════════════
+         CATH LAB DASHBOARD
+    ══════════════════════════════════════ -->
+    <div id="section-cathlab" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#e74c3c;"><i class="bi bi-activity"></i></div><div class="kpi-label">Total Procedures</div><div class="kpi-value">428</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+18 vs last week</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-speedometer"></i></div><div class="kpi-label">Lab Utilization</div><div class="kpi-value">82%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+3%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg TAT</div><div class="kpi-value">38 min</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 6 min</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-check-circle"></i></div><div class="kpi-label">Success Rate</div><div class="kpi-value">97.4%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+0.4%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-exclamation-triangle"></i></div><div class="kpi-label">Emergency Cases</div><div class="kpi-value">34</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>+4 vs avg</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#e74c3c;"></i> Monthly Procedure Volume</div>
+          <div class="chart-wrap h200"><canvas id="cath-trend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#e74c3c;"></i> Elective vs Emergency</div>
+          <div class="chart-wrap h200"><canvas id="cath-type"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#e74c3c;"></i> Procedures by Type</div>
+        <div class="chart-wrap h180"><canvas id="cath-proc"></canvas></div>
+      </div>
+    </div><!-- /section-cathlab -->
+
+
+    <!-- ══════════════════════════════════════
+         ICU DASHBOARD
+    ══════════════════════════════════════ -->
+    <div id="section-icu" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-shield-plus"></i></div><div class="kpi-label">ICU Occupancy</div><div class="kpi-value">71.4%</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>vs 73.2% last wk</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-exclamation-octagon"></i></div><div class="kpi-label">Critical Alerts</div><div class="kpi-value" style="color:#c0392b;">5</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>Active now</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-lungs"></i></div><div class="kpi-label">Ventilator Usage</div><div class="kpi-value">32</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2 from yesterday</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-people"></i></div><div class="kpi-label">Nurse:Patient</div><div class="kpi-value">1 : 1.8</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Within target</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg ICU LOS</div><div class="kpi-value">3.8 days</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 0.4 days</div></div>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#7c3aed;"></i> ICU Occupancy — 14 Days</div>
+          <div class="chart-wrap h200"><canvas id="icu-occ"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#7c3aed;"></i> Admissions by Source</div>
+          <div class="chart-wrap h200"><canvas id="icu-source"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-down" style="color:#7c3aed;"></i> Mortality Rate Trend</div>
+          <div class="chart-wrap h160"><canvas id="icu-mort"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#7c3aed;"></i> ICU Type Mix</div>
+          <div class="chart-wrap h160"><canvas id="icu-type"></canvas></div>
+        </div>
+      </div>
+    </div><!-- /section-icu -->
+
+
+    <!-- ══════════════════════════════════════
+         OR / CLOSED UNITS
+    ══════════════════════════════════════ -->
+    <div id="section-or" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#16a085;"><i class="bi bi-scissors"></i></div><div class="kpi-label">Surgeries Today</div><div class="kpi-value">62</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+5 vs avg</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-speedometer2"></i></div><div class="kpi-label">OR Utilization</div><div class="kpi-value">78.3%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2.4%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-x-circle"></i></div><div class="kpi-label">Cancellation Rate</div><div class="kpi-value">6.2%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Improved by 1.1%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg Case Duration</div><div class="kpi-value">94 min</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>On target</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-arrow-left-right"></i></div><div class="kpi-label">First-Case On-Time</div><div class="kpi-value">82%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+4%</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#16a085;"></i> OR Utilization — Weekly</div>
+          <div class="chart-wrap h200"><canvas id="or-util"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#16a085;"></i> Elective vs Emergency</div>
+          <div class="chart-wrap h200"><canvas id="or-type"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#16a085;"></i> Surgeries by Specialty</div>
+        <div class="chart-wrap h180"><canvas id="or-spec"></canvas></div>
+      </div>
+    </div><!-- /section-or -->
+
+
+    <!-- ══════════════════════════════════════
+         LAB & RADIOLOGY
+    ══════════════════════════════════════ -->
+    <div id="section-lab" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#2980b9;"><i class="bi bi-eyedropper"></i></div><div class="kpi-label">Total Tests</div><div class="kpi-value">24,310</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2.8%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg Lab TAT</div><div class="kpi-value">46 min</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 2.7 min</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-exclamation-triangle"></i></div><div class="kpi-label">Critical Values</div><div class="kpi-value">38</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>All notified</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-camera"></i></div><div class="kpi-label">Radiology Scans</div><div class="kpi-value">1,840</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+5%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-hourglass-split"></i></div><div class="kpi-label">Pending Reports</div><div class="kpi-value">142</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>+18 from avg</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#2980b9;"></i> TAT Trend — 14 Days</div>
+          <div class="chart-wrap h200"><canvas id="lab-tat"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#2980b9;"></i> Lab vs Radiology</div>
+          <div class="chart-wrap h200"><canvas id="lab-split"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#2980b9;"></i> Tests by Category</div>
+        <div class="chart-wrap h180"><canvas id="lab-cat"></canvas></div>
+      </div>
+    </div><!-- /section-lab -->
+
+
+    <!-- ══════════════════════════════════════
+         DIGITAL MARKETING
+    ══════════════════════════════════════ -->
+    <div id="section-marketing" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#f39c12;"><i class="bi bi-person-plus"></i></div><div class="kpi-label">Leads</div><div class="kpi-value">1,248</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+12% vs last wk</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-currency-dollar"></i></div><div class="kpi-label">Cost / Lead</div><div class="kpi-value">342 SAR</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 18 SAR</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-cursor"></i></div><div class="kpi-label">CTR</div><div class="kpi-value">3.91%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+0.4%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-funnel"></i></div><div class="kpi-label">Conversion Rate</div><div class="kpi-value">18.6%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2.3%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-graph-up-arrow"></i></div><div class="kpi-label">ROAS</div><div class="kpi-value">4.2x</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+0.3x</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#f39c12;"></i> Weekly Leads — 8 Weeks</div>
+          <div class="chart-wrap h200"><canvas id="mkt-leads"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#f39c12;"></i> Channel Mix</div>
+          <div class="chart-wrap h200"><canvas id="mkt-channel"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#f39c12;"></i> Leads by Channel — This Week</div>
+        <div class="chart-wrap h180"><canvas id="mkt-bar"></canvas></div>
+      </div>
+    </div><!-- /section-marketing -->
+
+
+    <!-- ══════════════════════════════════════
+         CRM & SALES
+    ══════════════════════════════════════ -->
+    <div id="section-crm" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#8e44ad;"><i class="bi bi-buildings"></i></div><div class="kpi-label">Active Accounts</div><div class="kpi-value">342</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+14 this month</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-plus-circle"></i></div><div class="kpi-label">New Accounts</div><div class="kpi-value">28</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+6 vs last month</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Pipeline Value</div><div class="kpi-value">4.8M SAR</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+820K</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-trophy"></i></div><div class="kpi-label">Win Rate</div><div class="kpi-value">38.4%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+3.2%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-person-dash"></i></div><div class="kpi-label">Churn Rate</div><div class="kpi-value">4.1%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Improved by 0.6%</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#8e44ad;"></i> Monthly Revenue — 6 Months</div>
+          <div class="chart-wrap h200"><canvas id="crm-rev"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#8e44ad;"></i> Account Type Mix</div>
+          <div class="chart-wrap h200"><canvas id="crm-type"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-steps" style="color:#8e44ad;"></i> Pipeline by Stage</div>
+        <div class="chart-wrap h180"><canvas id="crm-pipeline"></canvas></div>
+      </div>
+    </div><!-- /section-crm -->
+
+
+    <!-- ══════════════════════════════════════
+         CALL CENTER
+    ══════════════════════════════════════ -->
+    <div id="section-callcenter" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#1a6b8a;"><i class="bi bi-telephone"></i></div><div class="kpi-label">Total Calls Today</div><div class="kpi-value">2,840</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+4.2%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-check-circle"></i></div><div class="kpi-label">Answer Rate</div><div class="kpi-value">92.6%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+1.8%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-clock"></i></div><div class="kpi-label">Avg Handle Time</div><div class="kpi-value">4:32</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 18 sec</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-telephone-x"></i></div><div class="kpi-label">Abandon Rate</div><div class="kpi-value" style="color:#c0392b;">4.8%</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>+0.4% vs target</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-star"></i></div><div class="kpi-label">SLA Adherence</div><div class="kpi-value">88.2%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2.1%</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#1a6b8a;"></i> Calls by Hour — Today</div>
+          <div class="chart-wrap h200"><canvas id="cc-hourly"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#1a6b8a;"></i> Resolution Rate</div>
+          <div class="chart-wrap h200"><canvas id="cc-res"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#1a6b8a;"></i> Call Types Breakdown</div>
+        <div class="chart-wrap h180"><canvas id="cc-types"></canvas></div>
+      </div>
+    </div><!-- /section-callcenter -->
+
+
+    <!-- ══════════════════════════════════════
+         INSURANCE
+    ══════════════════════════════════════ -->
+    <div id="section-insurance" class="dash-section">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e3f4fb;color:#2c3e50;"><i class="bi bi-file-earmark-check"></i></div><div class="kpi-label">Claims Submitted</div><div class="kpi-value">3,841</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+6.2%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#e9f7ef;color:#1a8a4a;"><i class="bi bi-check-circle"></i></div><div class="kpi-label">Approval Rate</div><div class="kpi-value">71.8%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>+2.4%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fdecea;color:#c0392b;"><i class="bi bi-x-circle"></i></div><div class="kpi-label">Rejection Rate</div><div class="kpi-value">14.2%</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Improved by 1.8%</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#fef4e4;color:#c87700;"><i class="bi bi-hourglass-split"></i></div><div class="kpi-label">Pending Claims</div><div class="kpi-value">840</div><div class="kpi-delta down"><i class="bi bi-arrow-down-short"></i>+60 from target</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-clock-history"></i></div><div class="kpi-label">Avg Processing</div><div class="kpi-value">5.2 days</div><div class="kpi-delta up"><i class="bi bi-arrow-up-short"></i>Better by 0.8 days</div></div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-graph-up" style="color:#2c3e50;"></i> Monthly Submissions — 6 Months</div>
+          <div class="chart-wrap h200"><canvas id="ins-trend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="bi bi-pie-chart-fill" style="color:#2c3e50;"></i> Claim Status</div>
+          <div class="chart-wrap h200"><canvas id="ins-status"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title"><i class="bi bi-bar-chart-fill" style="color:#2c3e50;"></i> Claims by Insurer</div>
+        <div class="chart-wrap h180"><canvas id="ins-insurer"></canvas></div>
+      </div>
+    </div><!-- /section-insurance -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
 <script>
-function makeChart(id, data, color) {
-  const labels = ['8:00','10:00','12:00','14:00','16:00'];
-  new Chart(document.getElementById(id), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        borderColor: color,
-        backgroundColor: color + '22',
-        borderWidth: 2,
-        pointRadius: 2,
-        fill: true,
-        tension: 0.4
-      }]
-    },
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+const titles = {
+  home: ['Executive Overview', 'Real-time performance across all departments'],
+  opd: ['OPD Dashboard', 'Outpatient Department — visits, wait times & performance'],
+  ipd: ['Inpatient Dashboard', 'Bed occupancy, LOS, admissions & payer mix'],
+  cathlab: ['Cath Lab Dashboard', 'Procedure volume, utilization & turnaround time'],
+  icu: ['ICU Dashboard', 'Occupancy, critical alerts & clinical outcomes'],
+  or: ['OR / Closed Units', 'Surgical volume, OR utilization & scheduling'],
+  lab: ['Lab & Radiology', 'Test volume, TAT, critical values & radiology'],
+  marketing: ['Digital Marketing', 'Leads, CTR, conversion & channel performance'],
+  crm: ['CRM & Sales', 'Pipeline, accounts, revenue & win rate'],
+  callcenter: ['Call Center', 'Call volume, answer rate, SLA & resolution'],
+  insurance: ['Insurance', 'Claims submission, approvals, rejections & processing']
+};
+
+const chartRegistry = {};
+
+function showSection(name, el) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + name + "'")) n.classList.add('active');
+    });
+  }
+  document.getElementById('page-title').textContent = titles[name][0];
+  document.getElementById('page-sub').textContent = titles[name][1];
+  initCharts(name);
+}
+
+/* ═══════════════════════════════════════════
+   CHART HELPERS
+═══════════════════════════════════════════ */
+const WEEKS = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+const DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MONTHS6 = ['Dec','Jan','Feb','Mar','Apr','May'];
+const DAYS14 = Array.from({length:14},(_,i)=>`D${i+1}`);
+
+function mkChart(id, type, labels, datasets, opts={}) {
+  if (chartRegistry[id]) return;
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartRegistry[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
     options: {
-      plugins: { legend: { display: false } },
-      scales: { x: { display: false }, y: { display: false } },
-      animation: false
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: opts.legend ?? (type==='doughnut'||type==='pie'), position:'right', labels:{font:{size:11},boxWidth:12,padding:10} }
+      },
+      scales: type !== 'doughnut' && type !== 'pie' ? {
+        x: { grid:{display:false}, ticks:{font:{size:10},color:'#789'} },
+        y: { grid:{color:'#eef1f4'}, ticks:{font:{size:10},color:'#789'}, ...( opts.yOpts||{}) }
+      } : undefined,
+      animation: { duration: 400 }
     }
   });
 }
 
-makeChart('chartOPD',       [180,210,256,230,195], '#1a6b8a');
-makeChart('chartIPD',       [72,74,77,76,75],      '#c87700');
-makeChart('chartCath',      [1,2,3,3,2],           '#e74c3c');
-makeChart('chartICU',       [68,70,72,71,70],      '#7c3aed');
-makeChart('chartMarketing', [900,1050,1200,1248,1180], '#f39c12');
-makeChart('chartCall',      [18,22,30,24,20],      '#1a6b8a');
-
-function showSection(name) {
-  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-  event.target.closest('.sidebar-item').classList.add('active');
-  const titles = {
-    home: 'Executive Overview', opd: 'OPD Dashboard', ipd: 'Inpatient Dashboard',
-    cathlab: 'Cath Lab Dashboard', icu: 'ICU Dashboard', or: 'OR / Closed Units',
-    lab: 'Lab & Radiology', marketing: 'Digital Marketing', crm: 'CRM & Sales',
-    callcenter: 'Call Center', insurance: 'Insurance'
-  };
-  document.getElementById('page-title').textContent = titles[name] || 'Executive Overview';
+function line(id, labels, data, color, label='') {
+  mkChart(id, 'line', labels, [{
+    label, data, borderColor: color, backgroundColor: color+'18',
+    borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: color,
+    fill: true, tension: 0.4
+  }]);
 }
+
+function lineMulti(id, labels, datasets) {
+  mkChart(id, 'line', labels, datasets);
+}
+
+function bar(id, labels, data, colors, label='') {
+  const bg = Array.isArray(colors) ? colors : Array(data.length).fill(colors+'cc');
+  mkChart(id, 'bar', labels, [{ label, data, backgroundColor: bg, borderRadius: 5, borderSkipped: false }]);
+}
+
+function barMulti(id, labels, datasets) {
+  mkChart(id, 'bar', labels, datasets, {});
+}
+
+function donut(id, labels, data, colors) {
+  mkChart(id, 'doughnut', labels, [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }], {legend:true});
+}
+
+function miniLine(id, data, color) {
+  if (chartRegistry[id]) return;
+  const ctx = document.getElementById(id); if(!ctx) return;
+  chartRegistry[id] = new Chart(ctx, {
+    type:'line', data:{ labels: data.map((_,i)=>i), datasets:[{ data, borderColor:color, backgroundColor:color+'22', borderWidth:2, pointRadius:0, fill:true, tension:0.4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}}, animation:{duration:0} }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   CHART INIT PER SECTION
+═══════════════════════════════════════════ */
+function initCharts(name) {
+  if (name === 'home') {
+    miniLine('m-opd',  [180,210,256,230,195,240,220], '#1a6b8a');
+    miniLine('m-ipd',  [72,74,77,76,75,77,78],        '#c87700');
+    miniLine('m-cath', [1,2,3,3,2,4,3],               '#e74c3c');
+    miniLine('m-icu',  [68,70,72,71,70,73,71],         '#7c3aed');
+    miniLine('m-mkt',  [900,1050,1200,1248,1180,1300,1248], '#f39c12');
+    miniLine('m-call', [18,22,30,24,20,26,24],         '#1a6b8a');
+  }
+
+  if (name === 'opd') {
+    lineMulti('opd-visits', DAYS, [
+      { label:'This Week', data:[2200,2800,3100,2900,2600,2200,750], borderColor:'#1a6b8a', backgroundColor:'#1a6b8a18', borderWidth:2.5, pointRadius:3, fill:true, tension:0.4 },
+      { label:'Last Week', data:[2100,2700,2950,2750,2500,2100,700], borderColor:'#24a6c7', backgroundColor:'#24a6c718', borderWidth:2, pointRadius:3, fill:false, tension:0.4, borderDash:[5,4] }
+    ]);
+    donut('opd-type', ['Follow-up','New Patient','Emergency'], [54,32,14], ['#1a6b8a','#24a6c7','#e74c3c']);
+    bar('opd-specialty', ['Int. Medicine','Cardiology','Orthopedics','Pediatrics','Dermatology','Ophthalmology'],
+        [4120,2870,2340,2100,1850,1400], '#1a6b8acc');
+    line('opd-wait', ['8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm'],
+         [18,26,35,42,38,32,28,24,20], '#c87700');
+  }
+
+  if (name === 'ipd') {
+    line('ipd-occ', DAYS14, [74,75,77,76,75,72,71,73,76,78,77,75,74,76], '#c87700');
+    donut('ipd-payer', ['Insurance','Corporate','Cash','Government'], [48,28,16,8], ['#1a6b8a','#24a6c7','#e9f7ef80','#c87700']);
+    bar('ipd-ward', ['Medical','Surgical','Pediatric','Maternity','Cardiac','Oncology'],
+        [310,248,192,160,138,96], '#c87700cc');
+    bar('ipd-los', ['Medical','Surgical','Pediatric','Maternity','Cardiac','Oncology'],
+        [5.2,3.8,3.2,2.8,6.4,7.1], '#7c3aedcc');
+  }
+
+  if (name === 'cathlab') {
+    line('cath-trend', MONTHS6, [380,398,412,406,418,428], '#e74c3c');
+    donut('cath-type', ['Elective','Emergency','Urgent'], [62,20,18], ['#1a6b8a','#e74c3c','#f39c12']);
+    bar('cath-proc', ['PCI','Diagnostic Angio','EP Study','TAVI','Pacemaker','Other'],
+        [148,132,72,38,24,14], ['#e74c3ccc','#c0392bcc','#e67e22cc','#f39c12cc','#2980b9cc','#8e44adcc']);
+  }
+
+  if (name === 'icu') {
+    line('icu-occ', DAYS14, [68,70,72,74,73,71,70,72,75,74,72,70,71,71], '#7c3aed');
+    bar('icu-source', ['Emergency Dept','Post-Op','Ward Transfer','Direct Admit','Cath Lab'],
+        [82,64,48,28,14], '#7c3aedcc');
+    line('icu-mort', MONTHS6, [4.2,3.8,4.0,3.5,3.2,2.9], '#e74c3c');
+    donut('icu-type', ['Medical ICU','Surgical ICU','Cardiac ICU','Neuro ICU'], [38,30,22,10], ['#7c3aed','#1a6b8a','#e74c3c','#c87700']);
+  }
+
+  if (name === 'or') {
+    line('or-util', DAYS, [72,78,82,79,80,64,58], '#16a085');
+    donut('or-type', ['Elective','Emergency','Semi-urgent'], [68,18,14], ['#16a085','#e74c3c','#f39c12']);
+    bar('or-spec', ['General Surgery','Orthopedics','Cardiothoracic','Urology','Neurosurgery','Gynecology'],
+        [18,16,10,8,6,4], '#16a085cc');
+  }
+
+  if (name === 'lab') {
+    line('lab-tat', DAYS14, [52,50,48,49,47,46,44,45,47,46,45,44,46,46], '#2980b9');
+    donut('lab-split', ['Lab Tests','Radiology','Pathology'], [58,32,10], ['#2980b9','#7c3aed','#16a085']);
+    bar('lab-cat', ['Hematology','Biochemistry','Microbiology','X-Ray','CT Scan','MRI','Ultrasound'],
+        [5800,6200,3100,4200,2800,1400,840], '#2980b9cc');
+  }
+
+  if (name === 'marketing') {
+    line('mkt-leads', WEEKS, [820,900,980,1050,1100,1180,1200,1248], '#f39c12');
+    donut('mkt-channel', ['Google Ads','Social Media','SEO','Email','Direct'], [38,28,18,10,6], ['#f39c12','#e74c3c','#1a6b8a','#16a085','#8e44ad']);
+    bar('mkt-bar', ['Google Ads','Social Media','SEO','Email','Direct'],
+        [474,350,225,125,74], ['#f39c12cc','#e74c3ccc','#1a6b8acc','#16a085cc','#8e44adcc']);
+  }
+
+  if (name === 'crm') {
+    line('crm-rev', MONTHS6, [3.2,3.5,3.8,4.0,4.4,4.8], '#8e44ad', 'Pipeline (M SAR)');
+    donut('crm-type', ['Corporate','SME','Individual','Government'], [44,30,18,8], ['#8e44ad','#1a6b8a','#24a6c7','#c87700']);
+    bar('crm-pipeline', ['Lead','Qualified','Proposal','Negotiation','Closed Won'],
+        [180,120,76,42,28], ['#8e44ad44','#8e44ad66','#8e44ad88','#8e44adaa','#8e44ad']);
+  }
+
+  if (name === 'callcenter') {
+    bar('cc-hourly', ['8','9','10','11','12','13','14','15','16','17'],
+        [120,210,310,380,340,300,280,260,200,140], '#1a6b8acc');
+    donut('cc-res', ['Resolved','Escalated','Callback','Abandoned'], [68,14,11,7], ['#1a8a4a','#c87700','#1a6b8a','#e74c3c']);
+    bar('cc-types', ['Appointment','Inquiry','Complaint','Results','Insurance','Other'],
+        [860,620,380,440,320,220], ['#1a6b8acc','#24a6c7cc','#e74c3ccc','#7c3aedcc','#c87700cc','#16a085cc']);
+  }
+
+  if (name === 'insurance') {
+    bar('ins-trend', MONTHS6, [3100,3280,3450,3600,3720,3841], '#2c3e50cc');
+    donut('ins-status', ['Approved','Pending','Rejected','Under Review'], [72,14,10,4], ['#1a8a4a','#c87700','#e74c3c','#1a6b8a']);
+    bar('ins-insurer', ['BUPA Arabia','Tawuniya','AXA Gulf','Medgulf','Walaa','Other'],
+        [980,820,640,520,380,501], ['#2c3e50cc','#34495ecc','#1a6b8acc','#24a6c7cc','#16a085cc','#8e44adcc']);
+  }
+}
+
+// Init home on load
+initCharts('home');
 </script>
 </body>
 </html>
