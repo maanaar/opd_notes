@@ -21,5 +21,10 @@ def opd_files(filename):
     return send_from_directory(OPD_ROOT, filename)
 
 
+@app.route("/analytics/")
+def analytics():
+    return send_from_directory(OPD_ROOT, "analytics.html")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2020, debug=True)

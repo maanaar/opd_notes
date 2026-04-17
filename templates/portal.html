@@ -158,9 +158,10 @@
       font-size: 2rem;
     }
 
-    .app-card.opd .icon-wrap    { background: #e3f4fb; color: #1a6b8a; }
-    .app-card.resub .icon-wrap  { background: #fef4e4; color: #c87700; }
-    .app-card.screen .icon-wrap { background: #e9f7ef; color: #1a8a4a; }
+    .app-card.opd .icon-wrap     { background: #e3f4fb; color: #1a6b8a; }
+    .app-card.resub .icon-wrap   { background: #fef4e4; color: #c87700; }
+    .app-card.screen .icon-wrap  { background: #e9f7ef; color: #1a8a4a; }
+    .app-card.analytics .icon-wrap { background: #f0eafb; color: #6c3fc5; }
 
     .app-card h3 {
       font-size: 1.05rem;
@@ -187,9 +188,10 @@
       transition: opacity 0.15s;
     }
 
-    .app-card.opd .open-btn    { background: #1a6b8a; color: #fff; }
-    .app-card.resub .open-btn  { background: #c87700; color: #fff; }
-    .app-card.screen .open-btn { background: #1a8a4a; color: #fff; }
+    .app-card.opd .open-btn      { background: #1a6b8a; color: #fff; }
+    .app-card.resub .open-btn    { background: #c87700; color: #fff; }
+    .app-card.screen .open-btn   { background: #1a8a4a; color: #fff; }
+    .app-card.analytics .open-btn { background: #6c3fc5; color: #fff; }
     .open-btn:hover { opacity: 0.85; }
 
     /* ── iframe views ── */
@@ -244,6 +246,9 @@
     <button class="tab-btn" id="tab-screen" onclick="showView('screen')">
       <i class="bi bi-robot"></i> Screening
     </button>
+    <button class="tab-btn" id="tab-analytics" onclick="showView('analytics')">
+      <i class="bi bi-bar-chart-line-fill"></i> Analytics
+    </button>
 
     <div class="spacer"></div>
     <span class="time-label" id="clock"></span>
@@ -282,6 +287,13 @@
           <button class="open-btn">Open App</button>
         </div>
 
+        <div class="app-card analytics" onclick="showView('analytics')">
+          <div class="icon-wrap"><i class="bi bi-bar-chart-line-fill"></i></div>
+          <h3>Healthcare Analytics</h3>
+          <p>Live and historical dashboards covering OPD, IPD, Cath Lab, ICU, OR, Lab, and more.</p>
+          <button class="open-btn">Open App</button>
+        </div>
+
       </div>
     </div>
 
@@ -300,11 +312,16 @@
       <iframe src="" title="Doctor Screening" id="iframe-screen"></iframe>
     </div>
 
+    <!-- Analytics iframe -->
+    <div class="iframe-view" id="view-analytics">
+      <iframe src="/analytics/" title="Healthcare Analytics" id="iframe-analytics"></iframe>
+    </div>
+
   </div>
 
   <script>
-    const views = ['home', 'opd', 'resub', 'screen'];
-    let loaded = { home: true, opd: false, resub: false, screen: false };
+    const views = ['home', 'opd', 'resub', 'screen', 'analytics'];
+    let loaded = { home: true, opd: false, resub: false, screen: false, analytics: false };
 
     function showView(name) {
       // Update tabs
@@ -314,7 +331,7 @@
 
       // Show / hide views
       document.getElementById('view-home').style.display = name === 'home' ? 'flex' : 'none';
-      ['opd', 'resub', 'screen'].forEach(v => {
+      ['opd', 'resub', 'screen', 'analytics'].forEach(v => {
         const el = document.getElementById('view-' + v);
         el.classList.toggle('active', v === name);
       });
