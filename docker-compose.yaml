@@ -44,7 +44,7 @@ services:
     container_name: revy_submission
     restart: unless-stopped
     ports:
-      - "2300:2300"
+      - "2300:5000"
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
@@ -55,7 +55,7 @@ services:
     container_name: revy_approval
     restart: unless-stopped
     ports:
-      - "2400:2400"
+      - "2400:5000"
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
